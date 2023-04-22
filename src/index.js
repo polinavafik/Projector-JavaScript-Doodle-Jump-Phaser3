@@ -6,7 +6,7 @@ const config = {
 		default: 'arcade',
 		arcade: {
 			gravity: { y: 500 },
-			debug: true,
+			debug: false,
 		},
 	},
 	scene: {
@@ -14,6 +14,10 @@ const config = {
 		create: create,
 		update: update,
 	},
+	scale: {
+		parent: 'mygame',
+		autoCenter: Phaser.Scale.CENTER_BOTH
+	}
 }
 
 window.addEventListener(
