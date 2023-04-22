@@ -69,7 +69,7 @@ function create() {
 		key: 'jump',
 		frames: [{ key: 'playerJumpSprite' }, { key: 'playerSprite' }],
 		frameRate: 10,
-		repeat: 0
+		repeat: -1
 	});
 
 	this.anims.create({
@@ -87,8 +87,7 @@ function create() {
 	this.anims.create({
 		key: 'turn',
 		frames: [{ key: 'playerSprite' }],
-		frameRate: 20,
-		repeat: 0
+		frameRate: 20
 	});
 	this.anims.create({
 		key: 'enemy',
@@ -159,6 +158,8 @@ function update() {
 	newSnack()
 	checkIfFall(this.physics)
 	updateScore()
+
+
 }
 
 function createPlayer(physics) {
@@ -234,8 +235,7 @@ function checkMovement() {
 	}
 	if (!leftKey.isDown && !rightKey.isDown) {
 		player.setVelocityX(0)
-		player.anims.play('turn', true)
-
+		player.anims.play('jump', true)
 	}
 }
 
@@ -300,4 +300,5 @@ function storeMaxScore() {
 		scoreMax.setText(`Max Score: ${localStorage.getItem('maxScore')}`)
 	}
 }
+
 
