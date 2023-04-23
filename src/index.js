@@ -39,10 +39,12 @@ let rightKey
 
 let gameOverDistance = 0
 let gameOver = false
+let bgdMusicConfig
 
 let score = 0
 let scoreText
 let scoreMax
+let gameOverText
 
 
 function preload() {
@@ -51,6 +53,9 @@ function preload() {
 	this.load.image('playerJumpSprite', 'assets/player_jump.png')
 	this.load.image('playerLeftSprite', 'assets/player_left_jump.png')
 	this.load.image('playerRightSprite', 'assets/player_right_jump.png')
+	this.load.image('playerGameOver0', 'assets/player_gameOver0.png')
+	this.load.image('playerGameOver1', 'assets/player_gameOver1.png')
+	this.load.image('playerGameOver2', 'assets/player_gameOver2.png')
 	this.load.image('platform', 'assets/game-tiles.png')
 	this.load.image('enemy', 'assets/enemy_default.png')
 	this.load.spritesheet('enemyAnims', 'assets/enemy.png', { frameWidth: 161, frameHeight: 95 })
@@ -67,12 +72,14 @@ function create() {
 		.text(20, 60, 'score: 0', { fontSize: '32px', fill: '#fff' })
 		.setScrollFactor(0)
 		.setDepth(5)
-
 	scoreMax = this.add
 		.text(20, 20, `Max Score: ${localStorage.getItem('maxScore')}`, { fontSize: '32px', fill: '#fff' })
 		.setScrollFactor(0)
 		.setDepth(5)
-
+	gameOverText = this.add.text(150, 300, 'GAME OVER ', { fontSize: '64px', fill: '#fff', })
+		.setScrollFactor(0)
+		.setDepth(5)
+	gameOverText.visible = false
 	this.anims.create({
 		key: 'jump',
 		frames: [{ key: 'playerJumpSprite' }, { key: 'playerSprite' }],
@@ -96,8 +103,16 @@ function create() {
 		key: 'turn',
 		frames: [{ key: 'playerSprite' }],
 		frameRate: 20,
-		repeat: 0
+		repeat: 0,
+		// duration: 100,
+		// hideOnComplete: true
 	});
+	this.anims.create({
+		key: 'playerGameOver',
+		frames: [{ key: 'playerGameOver0' }, { key: 'playerGameOver2' }, { key: 'playerGameOver1' }],
+		frameRate: 5,
+		repeat: -1,
+	})
 	this.anims.create({
 		key: 'enemy',
 		frames: 'enemyAnims',
@@ -109,8 +124,18 @@ function create() {
 	this.bgdMusic = this.sound.add('bgdMusic')
 	this.jumpSound = this.sound.add('jumpSound')
 	this.eatSound = this.sound.add('eatSound')
+	this.gameOverSound = this.sound.add('gameOverSound')
 
-
+	bgdMusicConfig = {
+		mute: false,
+		volume: 1,
+		rate: 1,
+		detune: 0,
+		seek: 0,
+		loop: false,
+		delay: 0
+	}
+	this.bgdMusic.play(bgdMusicConfig)
 
 	createPlayer(this.physics)
 	createPlatforms(this.physics)
@@ -131,9 +156,14 @@ function create() {
 	})
 
 	this.physics.add.collider(player, enemies, (_, enemy) => {
+		// gameOverStuff()
 		this.physics.pause()
 		enemy.anims.stop()
+		player.anims.play('playerGameOver', true)
+		this.bgdMusic.stop()
+		this.gameOverSound.play()
 		gameOver = true
+		gameOverText.visible = true
 	})
 
 	this.physics.add.collider(platforms, enemies, collider => {
@@ -165,10 +195,11 @@ function create() {
 	this.cameras.main.startFollow(player, false, 0, 1)
 
 	createKeys(this.input.keyboard)
+
 }
 
 function update() {
-	if (gameOver) return
+	// if (gameOver) return
 	checkMovement()
 	newPlatforms()
 	newEnemies()
@@ -250,7 +281,7 @@ function checkMovement() {
 	}
 	if (!leftKey.isDown && !rightKey.isDown) {
 		player.setVelocityX(0)
-		player.anims.play('turn', true)
+		// player.anims.play('turn', false)
 
 	}
 }
@@ -294,8 +325,10 @@ function newSnack() {
 
 function checkIfFall(physics) {
 	if (player.body.y > gameOverDistance) {
+		// gameOverStuff()
 		physics.pause()
 		gameOver = true
+		gameOverText.visible = true
 	} else if (player.body.y * -1 - gameOverDistance * -1 > 700) {
 		gameOverDistance = player.body.y + 700
 	}
@@ -316,4 +349,3 @@ function storeMaxScore() {
 		scoreMax.setText(`Max Score: ${localStorage.getItem('maxScore')}`)
 	}
 }
-
