@@ -55,6 +55,10 @@ function preload() {
 	this.load.image('enemy', 'assets/enemy_default.png')
 	this.load.spritesheet('enemyAnims', 'assets/enemy.png', { frameWidth: 161, frameHeight: 95 })
 	this.load.image('ball', 'assets/Parsnip.png')
+	this.load.audio('bgdMusic', ['assets/bgdMusic.mp3'])
+	this.load.audio('jumpSound', ['assets/jumpSound.mp3'])
+	this.load.audio('eatSound', ['assets/eatSound.mp3'])
+	this.load.audio('gameOverSound', ['assets/gameOverSound.mp3'])
 }
 
 function create() {
@@ -102,6 +106,12 @@ function create() {
 		yoyo: true,
 	})
 
+	this.bgdMusic = this.sound.add('bgdMusic')
+	this.jumpSound = this.sound.add('jumpSound')
+	this.eatSound = this.sound.add('eatSound')
+
+
+
 	createPlayer(this.physics)
 	createPlatforms(this.physics)
 	createEnemies(this.physics)
@@ -110,6 +120,7 @@ function create() {
 	this.physics.add.collider(player, platforms, (playerObj, platformObj) => {
 		if (platformObj.body.touching.up && playerObj.body.touching.down) {
 			player.setVelocityY(-550)
+			this.jumpSound.play()
 			player.anims.play('jump', true)
 		}
 	})
@@ -136,6 +147,7 @@ function create() {
 			score += 100
 			scoreText.setText('Score: ' + score)
 			player.setVelocityY(-1000)
+			this.eatSound.play()
 			player.anims.play('jump', true)
 		}
 	})
