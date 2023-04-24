@@ -159,7 +159,7 @@ function create() {
 		this.physics.pause()
 		enemy.anims.stop()
 		player.anims.play('playerGameOver', true)
-		player.setTint('0xff0000')
+		// player.setTint('0xff0000')
 		this.bgdMusic.stop()
 		this.gameOverSound.play()
 		gameOver = true
