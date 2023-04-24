@@ -156,10 +156,10 @@ function create() {
 	})
 
 	this.physics.add.collider(player, enemies, (_, enemy) => {
-		// gameOverStuff()
 		this.physics.pause()
 		enemy.anims.stop()
 		player.anims.play('playerGameOver', true)
+		player.setTint('0xff0000')
 		this.bgdMusic.stop()
 		this.gameOverSound.play()
 		gameOver = true
@@ -325,7 +325,6 @@ function newSnack() {
 
 function checkIfFall(physics) {
 	if (player.body.y > gameOverDistance) {
-		// gameOverStuff()
 		physics.pause()
 		gameOver = true
 		gameOverText.visible = true
